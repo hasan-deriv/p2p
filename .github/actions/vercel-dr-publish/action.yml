@@ -21,33 +21,30 @@ runs:
         npm install -g vercel@latest
         vercel --version
 
-    - name: Configure Vercel
+    - name: Verify Configuration
+      shell: bash
+      run: |
+        if [ ! -f "vercel.json" ]; then
+          echo "Error: vercel.json not found in project root"
+          exit 1
+        fi
+        echo "Current vercel.json configuration:"
+        cat vercel.json
+
+    - name: Setup Project
       shell: bash
       env:
         VERCEL_TOKEN: ${{ inputs.VERCEL_TOKEN }}
       run: |
-        # Clean up
         rm -rf .vercel
-
-        # Create new configuration
         mkdir -p .vercel
-        echo '{
-          "version": 2,
-          "routes": [
-            { "handle": "filesystem" },
-            {
-              "src": "/(.*)",
-              "dest": "/index.html"
-            }
-          ]
-        }' > vercel.json
-        
-        # Verify configuration
-        cat vercel.json
+        echo "{\"projectId\":\"${{ inputs.VERCEL_PROJECT_ID }}\"}" > .vercel/project.json
 
     - name: Deploy
       shell: bash
       env:
         VERCEL_TOKEN: ${{ inputs.VERCEL_TOKEN }}
+      if: ${{ inputs.ENVIRONMENT == 'Production' }}
       run: |
+        echo "Deploying to Vercel..."
         vercel deploy --prod --token=$VERCEL_TOKEN --yes
