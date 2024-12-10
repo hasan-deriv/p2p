@@ -3,10 +3,9 @@
     "outputDirectory": "dist",
     "buildCommand": "echo ✅  Skipping build to use existing built files",
     "rewrites": [
-        { "handle": "filesystem" },
         {
-            "src": "/(.*)",
-            "dest": "/index.html"
+            "source": "/(.*)",
+            "destination": "/index.html"
         }
     ]
 }
