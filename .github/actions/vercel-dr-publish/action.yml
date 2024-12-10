@@ -45,21 +45,12 @@ runs:
         VERCEL_TOKEN: ${{ inputs.VERCEL_TOKEN }}
       run: |
         vercel pull --yes --token=$VERCEL_TOKEN
-  
-    - name: Build Project
-      shell: bash
-      env:
-        VERCEL_TOKEN: ${{ inputs.VERCEL_TOKEN }}
-      if: ${{ inputs.ENVIRONMENT == 'Production' }}
-      run: |
-        echo "Building project..."
-        vercel build --prod --token=$VERCEL_TOKEN
 
-    - name: Deploy
-      shell: bash
+    - name: Deploy to Vercel (Production)
       env:
         VERCEL_TOKEN: ${{ inputs.VERCEL_TOKEN }}
       if: ${{ inputs.ENVIRONMENT == 'Production' }}
+      shell: bash
       run: |
-        echo "Deploying to Vercel..."
-        vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN --yes
+        vercel build --yes --prod --token=$VERCEL_TOKEN
+        url="$(vercel deploy --prod --prebuilt --token=$VERCEL_TOKEN)"
